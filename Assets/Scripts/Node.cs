@@ -9,10 +9,12 @@ public class Node
     public Node yes {get; set;}
     public Node no {get; set;}
     public int level {get; set;}
+    public int Fe {get; set;}
 
-    public Node (string _question, int _level)
+    public Node (string _question, int _level, int _Fe)
     {
         question = _question;
         level = _level;
+        Fe = _Fe;
     }
 }
