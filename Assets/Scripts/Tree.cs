@@ -8,6 +8,6 @@ public class Tree
 
     public Tree(string _initalRoot)
     {
-        Root = new Node(_initalRoot, 0, 0);
+        Root = new Node(_initalRoot, 0);
     }
 }
