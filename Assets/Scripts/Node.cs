@@ -10,9 +10,8 @@ public class Node
     public Node no {get; set;}
     public int Fe {get; set;}
 
-    public Node (string _question, int _Fe)
+    public Node (string _question)
     {
         question = _question;
-        Fe = _Fe;
     }
 }

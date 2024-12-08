@@ -31,7 +31,7 @@ public class QuestionsManager : MonoBehaviour
         }
 
         //Creating a new no Node
-        currentNode.no = new Node("Empty No Question", 0);
+        currentNode.no = new Node("Empty No Question");
         Debug.Log("New node NO created");
 
         //Check current FE Count
@@ -51,7 +51,7 @@ public class QuestionsManager : MonoBehaviour
         }
 
         //Creating a new yes Node
-        currentNode.yes = new Node("Empty Yes Question", 0);
+        currentNode.yes = new Node("Empty Yes Question");
         Debug.Log("New node YES created");
 
         //Check current FE Count
@@ -85,7 +85,7 @@ public class QuestionsManager : MonoBehaviour
         int leftHeight = GetHeight(_node.no);
         int rightHeight = GetHeight(_node.yes);
 
-        return 1 + Mathf.Max(leftHeight, rightHeight);
+        return Mathf.Max(leftHeight, rightHeight);
     }
 
     //Function that rotates the Nodes if the FE is unbalanced
