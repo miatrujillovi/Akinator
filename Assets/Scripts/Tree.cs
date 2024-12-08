@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tree
 {
-    public Node Root {get; private set;}
+    public Node Root {get; set;}
 
     public Tree(string _initalRoot)
     {
