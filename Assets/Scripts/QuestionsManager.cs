@@ -22,11 +22,20 @@ public class QuestionsManager : MonoBehaviour
         //Initialization of the Tree
         AVL = new Tree("Empty Root Question");
         currentNode = AVL.Root;
+        //JSONLoad();
+        Debug.Log("Nodo actual establecido en la raíz: " + currentNode.question);
     }
 
     //Function that when ->noBTN<- is clicked, it creates a Node on the Left side of the Tree
     public void LeftNode()
     {
+        //Verifying if currentNode points at Root
+        if (currentNode == null)
+        {
+            Debug.LogWarning("currentNode es nulo. Restableciendo a la Raiz.");
+            currentNode = AVL.Root;
+        }
+
         //Saving the question on the input
         if (currentNode != null)
         {
@@ -34,8 +43,11 @@ public class QuestionsManager : MonoBehaviour
         }
 
         //Creating a new no Node
-        currentNode.no = new Node("Empty No Question");
-        Debug.Log("New node NO created");
+        if (currentNode.no == null)
+        {
+            currentNode.no = new Node("Empty No Question");
+            Debug.Log("New node NO created");
+        }
 
         //Check current FE Count
         AVL.Root = FeManager(AVL.Root);
@@ -44,12 +56,19 @@ public class QuestionsManager : MonoBehaviour
         currentNode = currentNode.no;
 
         //Save currentNode in JSON
-        JSONSave();
+        //JSONSave();
     }
 
     //Function that when ->yesBTN<- is clicked, it creates a Node on the Right Side of the Tree
     public void RightNode() 
     {
+        //Verifying if currentNode points at Root
+        if (currentNode == null)
+        {
+            Debug.LogWarning("currentNode es nulo. Restableciendo a la Raiz.");
+            currentNode = AVL.Root;
+        }
+
         //Saving the question on the input
         if (currentNode != null)
         {
@@ -57,8 +76,11 @@ public class QuestionsManager : MonoBehaviour
         }
 
         //Creating a new yes Node
-        currentNode.yes = new Node("Empty Yes Question");
-        Debug.Log("New node YES created");
+        if (currentNode.yes == null)
+        {
+            currentNode.yes = new Node("Empty Yes Question");
+            Debug.Log("New node YES created");
+        }
 
         //Check current FE Count
         AVL.Root = FeManager(AVL.Root);
@@ -67,7 +89,7 @@ public class QuestionsManager : MonoBehaviour
         currentNode = currentNode.yes;
 
         //Save currentNode in JSON
-        JSONSave();
+        //JSONSave();
     }
 
     //Function that checks the balance of the Nodes
@@ -89,27 +111,22 @@ public class QuestionsManager : MonoBehaviour
         //Verifies if the number of the Fe calls for a Rotation to make the tree balanced
         if (_father.Fe > 1) //If the disbalance is to the left
         {
-            if (_father.no != null && _father.no.Fe >= 0)
+            if (_father.no.Fe > 0)
             {
-                return RotateRight(_father); //Simple Right Rotation
+                _father = RotateLL(_father); //Left Left Rotation
             } 
-            else if (_father.no != null && _father.no.Fe < 0)
+            else
             {
-                //Double Right Rotation
-                _father.no = RotateLeft(_father.no);
-                return RotateRight(_father);
+                _father = RotateLR(_father); //Left Right Rotation
             }
-        } 
-        else if (_father.Fe < -1) { //If th disbalance is to the right
-            if (_father.yes != null && _father.yes.Fe <= 0)
+        } else if (_father.Fe < -1) { //If the disbalance is to the right
+            if (_father.yes.Fe > 0)
             {
-                return RotateLeft(_father); //Simple Left Rotation
+                _father = RotateRL(_father); //Right Left Rotation
             } 
-            else if (_father.yes != null && _father.yes.Fe > 0)
+            else
             {
-                //Double Left Rotation
-                _father.yes = RotateRight(_father.yes);
-                return RotateLeft(_father);
+                _father = RotateRR(_father); //Right Right Rotation
             }
         }
 
@@ -127,50 +144,59 @@ public class QuestionsManager : MonoBehaviour
         return 1 + Mathf.Max(leftHeight, rightHeight);
     }
 
-    //Rotation of the Nodes to the Left Side of the Tree
-    private Node RotateLeft(Node _unbalancedNode)
+    private void Swap(Node a, Node b)
     {
-        if (_unbalancedNode == null || _unbalancedNode.yes == null)
-        {
-            return _unbalancedNode;
-        }
-
-        //Rotating...
-        Node rightSubTree = _unbalancedNode.yes;
-        _unbalancedNode.yes = rightSubTree.no;
-        rightSubTree.no = _unbalancedNode;
-
-        //Recalculating Fe...
-        _unbalancedNode.Fe = GetHeight(_unbalancedNode.no) - GetHeight(_unbalancedNode.yes);
-        rightSubTree.Fe = GetHeight(rightSubTree.no) - GetHeight(rightSubTree.yes);
-
-        //Save currentNode in JSON
-        JSONSave();
-
-        return rightSubTree;
+        (a.question, b.Fe) = (b.question, a.Fe);
     }
 
-    //Rotation of the Nodes to the Right side of the Tree
-    private Node RotateRight(Node _unbalancedNode)
+    //Function for Left Left Rotation
+    private Node RotateLL(Node _unbalancedNode)
     {
-        if (_unbalancedNode == null || _unbalancedNode.no == null)
-        {
-            return _unbalancedNode;
-        }
-
         //Rotating...
-        Node leftSubTree = _unbalancedNode.no;
-        _unbalancedNode.no = leftSubTree.yes;
-        leftSubTree.yes = _unbalancedNode;
+        Node pivot = _unbalancedNode.no;
+        _unbalancedNode.no = pivot.yes;
+        pivot.yes = _unbalancedNode;
 
         //Recalculating Fe...
         _unbalancedNode.Fe = GetHeight(_unbalancedNode.no) - GetHeight(_unbalancedNode.yes);
-        leftSubTree.Fe = GetHeight(leftSubTree.no) - GetHeight(leftSubTree.yes);
+        pivot.Fe = GetHeight(pivot.no) - GetHeight(pivot.yes);
 
-        //Save currentNode in JSON
-        JSONSave();
+        return pivot;
+    }
 
-        return leftSubTree;
+    //Function for Right Right Rotation
+    private Node RotateRR(Node _unbalancedNode)
+    {
+        //Rotating...
+        Node pivot = _unbalancedNode.yes;
+        _unbalancedNode.yes = pivot.no;
+        pivot.no = _unbalancedNode;
+
+        //Recalculating Fe...
+        _unbalancedNode.Fe = GetHeight(_unbalancedNode.no) - GetHeight(_unbalancedNode.yes);
+        pivot.Fe = GetHeight(pivot.no) - GetHeight(pivot.yes);
+
+        return pivot;
+    }
+
+    //Function for Left Right Rotation
+    private Node RotateLR(Node _unbalancedNode)
+    {
+        //Rotating
+        Node pivot = _unbalancedNode.no;
+        _unbalancedNode.no = RotateRR(pivot);
+
+        return RotateLL(_unbalancedNode);
+    }
+
+    //Function for Right Left Rotation
+    private Node RotateRL(Node _unbalancedNode)
+    {
+        //Rotating
+        Node pivot = _unbalancedNode.yes;
+        _unbalancedNode.yes = RotateLL(pivot);
+
+        return RotateRR(_unbalancedNode);
     }
 
     //Function to print the current tree
@@ -205,12 +231,16 @@ public class QuestionsManager : MonoBehaviour
     //Function that saves the Nodes in a JSON
     public void JSONSave()
     {
-        TreeData treeData = new TreeData();
-        treeData.root = new TreeData.NodeData(AVL.Root);
+        TreeData treeData = new TreeData
+        {
+            root = new TreeData.NodeData(AVL.Root)
+        };
 
         string json = JsonUtility.ToJson(treeData, true);
         System.IO.File.WriteAllText(filePath, json);
-        Debug.Log("Árbol guardado en JSON.");
+
+        Debug.Log("Árbol guardado en JSON:");
+        Debug.Log(json);
     }
 
     //Function to load the Data from the JSON
@@ -221,7 +251,12 @@ public class QuestionsManager : MonoBehaviour
             string json = System.IO.File.ReadAllText(filePath);
             TreeData treeData = JsonUtility.FromJson<TreeData>(json);
 
+            // Reconstruye el árbol a partir del JSON deserializado
             AVL.Root = DeserializeNode(treeData.root);
+
+            // Actualiza el nodo actual para que apunte a la raíz
+            currentNode = AVL.Root;
+
             Debug.Log("Árbol cargado desde JSON.");
         }
         else

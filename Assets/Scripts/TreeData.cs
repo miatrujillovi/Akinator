@@ -11,12 +11,15 @@ public class TreeData
         public NodeData yes;
         public NodeData no;
 
-        public NodeData(Node _node)
+        //Serialize recursive constructor to save data
+        public NodeData(Node node)
         {
-            question = _node.question;
-            Fe = _node.Fe;
-            yes = _node.yes != null ? new NodeData(_node.yes) : null;
-            no = _node.no != null ? new NodeData(_node.no) : null;
+            if (node == null) return;
+
+            this.question = node.question;
+            this.Fe = node.Fe;
+            this.yes = node.yes != null ? new NodeData(node.yes) : null;
+            this.no = node.no != null ? new NodeData(node.no) : null;
         }
     }
 }
