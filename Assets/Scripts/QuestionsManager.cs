@@ -144,11 +144,6 @@ public class QuestionsManager : MonoBehaviour
         return 1 + Mathf.Max(leftHeight, rightHeight);
     }
 
-    private void Swap(Node a, Node b)
-    {
-        (a.question, b.Fe) = (b.question, a.Fe);
-    }
-
     //Function for Left Left Rotation
     private Node RotateLL(Node _unbalancedNode)
     {
@@ -229,13 +224,12 @@ public class QuestionsManager : MonoBehaviour
     }
 
     //Function that saves the Nodes in a JSON
-    public void JSONSave()
+    public void JSONSave(Node _data)
     {
-        TreeData treeData = new TreeData
-        {
-            root = new TreeData.NodeData(AVL.Root)
-        };
+        TreeData treeData = new TreeData();
+        _data = new.TreeData();
 
+        //Save the string of TreeData inside the JSON
         string json = JsonUtility.ToJson(treeData, true);
         System.IO.File.WriteAllText(filePath, json);
 
