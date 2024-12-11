@@ -22,7 +22,7 @@ public class QuestionsManager : MonoBehaviour
         //Initialization of the Tree
         AVL = new Tree("Empty Root Question");
         currentNode = AVL.Root;
-        //JSONLoad();
+        TreeData treeData = new TreeData();
         Debug.Log("Nodo actual establecido en la raíz: " + currentNode.question);
     }
 
@@ -226,15 +226,17 @@ public class QuestionsManager : MonoBehaviour
     //Function that saves the Nodes in a JSON
     public void JSONSave(Node _data)
     {
-        TreeData treeData = new TreeData();
-        _data = new.TreeData();
-
         //Save the string of TreeData inside the JSON
-        string json = JsonUtility.ToJson(treeData, true);
+        string json = JsonUtility.ToJson(treeData);
         System.IO.File.WriteAllText(filePath, json);
 
         Debug.Log("Árbol guardado en JSON:");
         Debug.Log(json);
+    }
+
+    private Node SerializeTree(Node _node)
+    {
+        return _node;
     }
 
     //Function to load the Data from the JSON
@@ -246,7 +248,7 @@ public class QuestionsManager : MonoBehaviour
             TreeData treeData = JsonUtility.FromJson<TreeData>(json);
 
             // Reconstruye el árbol a partir del JSON deserializado
-            AVL.Root = DeserializeNode(treeData.root);
+            //AVL.Root = DeserializeNode(treeData);
 
             // Actualiza el nodo actual para que apunte a la raíz
             currentNode = AVL.Root;
@@ -260,7 +262,7 @@ public class QuestionsManager : MonoBehaviour
     }
 
     //Function to help deserialize the Data to one Tree.cs can understand
-    private Node DeserializeNode(TreeData.NodeData nodeData)
+    private Node DeserializeTree(TreeData.NodeData nodeData)
     {
         if (nodeData == null)
         {
@@ -269,8 +271,8 @@ public class QuestionsManager : MonoBehaviour
 
         Node node = new Node(nodeData.question);
         node.Fe = nodeData.Fe;
-        node.yes = DeserializeNode(nodeData.yes);
-        node.no = DeserializeNode(nodeData.no);
+        node.yes = DeserializeTree(nodeData.yes);
+        node.no = DeserializeTree(nodeData.no);
 
         return node;
     }

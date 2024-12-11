@@ -1,8 +1,6 @@
 [System.Serializable]
 public class TreeData
 {
-    public NodeData root;
-
     [System.Serializable]
     public class NodeData
     {
