@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
+using Newtonsoft.Json;
 
 public class QuestionsManager : MonoBehaviour
 {
@@ -14,16 +15,23 @@ public class QuestionsManager : MonoBehaviour
     public Node currentNode;
     public Tree AVL;
 
-    //Private Variables for JSON
-    private string filePath = "tree.json";
+    //Variables to save and load the JSON
+    public List<string> treeData = new List<string>(); //To save the data
+    private int index = 0; //Help control the deserialization
 
     private void Start()
     {
+        Debug.Log(Application.persistentDataPath);
+        JSONLoad();
         //Initialization of the Tree
-        AVL = new Tree("Empty Root Question");
         currentNode = AVL.Root;
-        TreeData treeData = new TreeData();
         Debug.Log("Nodo actual establecido en la raíz: " + currentNode.question);
+        if (AVL == null || AVL.Root == null)
+        {
+            Debug.LogError("El árbol AVL o su raíz están vacíos. No se puede guardar en JSON.");
+            return;
+        }
+
     }
 
     //Function that when ->noBTN<- is clicked, it creates a Node on the Left side of the Tree
@@ -52,11 +60,12 @@ public class QuestionsManager : MonoBehaviour
         //Check current FE Count
         AVL.Root = FeManager(AVL.Root);
 
+        //Save currentNode in JSON
+        JSONSave();
+
         //Changing currentNode to the new Node
         currentNode = currentNode.no;
 
-        //Save currentNode in JSON
-        //JSONSave();
     }
 
     //Function that when ->yesBTN<- is clicked, it creates a Node on the Right Side of the Tree
@@ -85,11 +94,12 @@ public class QuestionsManager : MonoBehaviour
         //Check current FE Count
         AVL.Root = FeManager(AVL.Root);
 
+        //Save currentNode in JSON
+        JSONSave();
+
         //Changing currentNode to the new Node
         currentNode = currentNode.yes;
 
-        //Save currentNode in JSON
-        //JSONSave();
     }
 
     //Function that checks the balance of the Nodes
@@ -223,57 +233,34 @@ public class QuestionsManager : MonoBehaviour
         TraverseTree(currentNode.yes, level++);
     }
 
-    //Function that saves the Nodes in a JSON
-    public void JSONSave(Node _data)
+    public void JSONSave()
     {
-        //Save the string of TreeData inside the JSON
-        string json = JsonUtility.ToJson(treeData);
+        if (AVL == null)
+        {
+            Debug.Log("El arbol esta vacio");
+            return;
+        }
+
+        string json = JsonConvert.SerializeObject(AVL, Formatting.Indented);
+        string filePath = Application.persistentDataPath + "/tree.json";
         System.IO.File.WriteAllText(filePath, json);
-
-        Debug.Log("Árbol guardado en JSON:");
-        Debug.Log(json);
+        Debug.Log("Arbol guardado Exitosamente");
     }
 
-    private Node SerializeTree(Node _node)
-    {
-        return _node;
-    }
-
-    //Function to load the Data from the JSON
     public void JSONLoad()
     {
+        string filePath = Application.persistentDataPath + "/tree.json";
+
         if (System.IO.File.Exists(filePath))
         {
             string json = System.IO.File.ReadAllText(filePath);
-            TreeData treeData = JsonUtility.FromJson<TreeData>(json);
-
-            // Reconstruye el árbol a partir del JSON deserializado
-            //AVL.Root = DeserializeNode(treeData);
-
-            // Actualiza el nodo actual para que apunte a la raíz
+            AVL = JsonConvert.DeserializeObject<Tree>(json);
             currentNode = AVL.Root;
-
-            Debug.Log("Árbol cargado desde JSON.");
-        }
+            Debug.Log("Árbol cargado exitosamente.");
+        } 
         else
         {
-            Debug.Log("ERROR: El archivo JSON no existe.");
+            Debug.LogWarning("No se encontró el archivo JSON.");
         }
-    }
-
-    //Function to help deserialize the Data to one Tree.cs can understand
-    private Node DeserializeTree(TreeData.NodeData nodeData)
-    {
-        if (nodeData == null)
-        {
-            return null;
-        }
-
-        Node node = new Node(nodeData.question);
-        node.Fe = nodeData.Fe;
-        node.yes = DeserializeTree(nodeData.yes);
-        node.no = DeserializeTree(nodeData.no);
-
-        return node;
     }
 }
