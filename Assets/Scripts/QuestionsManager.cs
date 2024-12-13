@@ -9,15 +9,10 @@ public class QuestionsManager : MonoBehaviour
 {
     //Public Variables to Unity Interface
     public Text questionTXT;
-    public Button yesBTN, noBTN;
 
     //Variables to navigate Tree
     public Node currentNode;
     public Tree AVL;
-
-    //Variables to save and load the JSON
-    public List<string> treeData = new List<string>(); //To save the data
-    private int index = 0; //Help control the deserialization
 
     private void Start()
     {
@@ -34,6 +29,20 @@ public class QuestionsManager : MonoBehaviour
 
     }
 
+    //Function to add question marks to the questions
+    public string AddQuestionMarks(string _text)
+    {
+        if (!_text.StartsWith("¿"))
+        {
+            _text = "¿" + _text;
+        }
+        if (!_text.EndsWith("?"))
+        {
+            _text += "?";
+        }
+        return _text;
+    }
+
     //Function that when ->noBTN<- is clicked, it creates a Node on the Left side of the Tree
     public void LeftNode()
     {
@@ -47,7 +56,8 @@ public class QuestionsManager : MonoBehaviour
         //Saving the question on the input
         if (currentNode != null)
         {
-            currentNode.question = questionTXT.text;
+            string result = AddQuestionMarks(questionTXT.text);
+            currentNode.question = result;
         }
 
         //Creating a new no Node
@@ -81,7 +91,8 @@ public class QuestionsManager : MonoBehaviour
         //Saving the question on the input
         if (currentNode != null)
         {
-            currentNode.question = questionTXT.text;
+            string result = AddQuestionMarks(questionTXT.text);
+            currentNode.question = result;
         }
 
         //Creating a new yes Node
@@ -233,6 +244,7 @@ public class QuestionsManager : MonoBehaviour
         TraverseTree(currentNode.yes, level++);
     }
 
+    //Function to save the Tree/Nodes onto the JSON
     public void JSONSave()
     {
         if (AVL == null)
@@ -247,6 +259,7 @@ public class QuestionsManager : MonoBehaviour
         Debug.Log("Arbol guardado Exitosamente");
     }
 
+    //Function to load the Tree/Nodes from the JSON
     public void JSONLoad()
     {
         string filePath = Application.persistentDataPath + "/tree.json";
