@@ -214,35 +214,6 @@ public class QuestionsManager : MonoBehaviour
         return RotateRR(_unbalancedNode);
     }
 
-    //Function to print the current tree
-    public void CheckTree()
-    {
-        if (AVL.Root == null)
-        {
-            Debug.Log("El Arbol esta Vacio.");
-            return;
-        }
-
-        Debug.Log("Estructura del Arbol:");
-        TraverseTree(AVL.Root, 0);
-    }
-
-    //Recursive function to get the information of every node
-    private void TraverseTree(Node currentNode, int level)
-    {
-        if (currentNode == null)
-        {
-            return;
-        }
-
-        Debug.Log($"Nivel {level}: Pregunta = \"{currentNode.question}\", Fe = {currentNode.Fe}, " +
-                  $"Yes -> {(currentNode.yes != null ? currentNode.yes.question : "null")}, " +
-                  $"No -> {(currentNode.no != null ? currentNode.no.question : "null")}");
-
-        TraverseTree(currentNode.no, level++);
-        TraverseTree(currentNode.yes, level++);
-    }
-
     //Function to save the Tree/Nodes onto the JSON
     public void JSONSave()
     {

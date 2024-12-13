@@ -82,10 +82,10 @@ public class GameManager : MonoBehaviour
     //Function for the Yes Button
     public void ClickYes()
     {
-        if (win == false)
+       if (win == false)
         {
             //First verifies if the next nodes are null, if they are, tell the user they reached the end of the Tree and if they would like to add more Nodes
-            if (QuestionsManager.currentNode.question == "Empty Yes Question" || QuestionsManager.currentNode.yes == null && QuestionsManager.currentNode.no == null)
+            if (QuestionsManager.currentNode.question == null || QuestionsManager.currentNode.question == "Empty No Question" || QuestionsManager.currentNode.question == "Empty Yes Question")
             {
                 DeveloperTools();
             }
@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour
         if (win == false)
         {
             //First verifies if the next nodes are null, if they are, tell the user they reached the end of the Tree and if they would like to add more Nodes
-            if (QuestionsManager.currentNode.question == "Empty No Question" || QuestionsManager.currentNode.yes == null && QuestionsManager.currentNode.no == null)
+            if (QuestionsManager.currentNode.question == null || QuestionsManager.currentNode.question == "Empty No Question" || QuestionsManager.currentNode.question == "Empty Yes Question")
             {
                 DeveloperTools();
             }
@@ -138,10 +138,24 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            QuestionsManager.currentNode = QuestionsManager.currentNode.no;
-            win = false;
-            akinatorSprite.sprite = akinatorNormal;
-            TXTAssigments();
+            if (QuestionsManager.currentNode.yes != null)
+            {
+                QuestionsManager.currentNode = QuestionsManager.currentNode.yes;
+                win = false;
+                akinatorSprite.sprite = akinatorNormal;
+                TXTAssigments();
+            } 
+            else if (QuestionsManager.currentNode.no != null) {
+                QuestionsManager.currentNode = QuestionsManager.currentNode.no;
+                win = false;
+                akinatorSprite.sprite = akinatorNormal;
+                TXTAssigments();
+            } else
+            {
+                win = false;
+                akinatorSprite.sprite = akinatorNormal;
+                DeveloperTools();
+            }
         }
     }
 
@@ -177,7 +191,11 @@ public class GameManager : MonoBehaviour
     //Function to exit the Developer Tools Panel
     public void ExitDeveloperTools()
     {
-        QuestionsManager.currentNode.question = answer;
+        if (QuestionsManager.currentNode.yes == null)
+        {
+            QuestionsManager.currentNode.yes = new Node(answer);
+            questionsManager.JSONSave();
+        }
         developersToolPanel.SetActive(false);
         StartOver();
     }
