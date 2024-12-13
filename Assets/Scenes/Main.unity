@@ -158,7 +158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.24300002, y: 0.32667068}
   m_AnchorMax: {x: 0.439, y: 0.39333534}
-  m_AnchoredPosition: {x: 2.1999817, y: 0.099998474}
+  m_AnchoredPosition: {x: 2.1999817, y: 0.1000061}
   m_SizeDelta: {x: 3.1849976, y: 1.2180996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114659103
@@ -669,7 +669,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.29236788, y: 0.27400002}
   m_AnchorMax: {x: 0.6837041, y: 0.377}
-  m_AnchoredPosition: {x: 0.5000076, y: 0.099990845}
+  m_AnchoredPosition: {x: 0.5, y: 0.099990845}
   m_SizeDelta: {x: 0.11510086, y: 0.052700043}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &637941008
@@ -1477,7 +1477,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.29236788, y: 0.27400002}
   m_AnchorMax: {x: 0.6837041, y: 0.377}
-  m_AnchoredPosition: {x: 0.5000076, y: 0.099990845}
+  m_AnchoredPosition: {x: 0.5, y: 0.099990845}
   m_SizeDelta: {x: 0.11510086, y: 0.052700043}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1304986640
@@ -1746,6 +1746,7 @@ MonoBehaviour:
   developersToolPanel: {fileID: 1828941228}
   textTXT: {fileID: 805447277}
   inputTXT: {fileID: 982140553}
+  inputField: {fileID: 2008701142}
   agregarBTN: {fileID: 1304986638}
   yesbtn: {fileID: 637941006}
   nobtn: {fileID: 1816349545}
@@ -1925,7 +1926,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.15050001, y: 0.56888616}
   m_AnchorMax: {x: 0.53375, y: 0.8197785}
-  m_AnchoredPosition: {x: 1.2999878, y: -0.053001404}
+  m_AnchoredPosition: {x: 1.2999878, y: -0.053009033}
   m_SizeDelta: {x: -2.182602, y: 3.014206}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1746009474
@@ -2077,7 +2078,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.29236788, y: 0.12985289}
   m_AnchorMax: {x: 0.6837041, y: 0.23400001}
-  m_AnchoredPosition: {x: 0.067970276, y: -0.19999695}
+  m_AnchoredPosition: {x: 0.06796265, y: -0.2000122}
   m_SizeDelta: {x: -0.74900055, y: -0.4033003}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1816349547
@@ -2191,7 +2192,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1828941229
 RectTransform:
   m_ObjectHideFlags: 0
