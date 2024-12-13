@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,12 +17,13 @@ public class GameManager : MonoBehaviour
     public GameObject developersToolPanel;
     public Text textTXT;
     public Text inputTXT;
+    public InputField inputField;
     public GameObject agregarBTN, yesbtn, nobtn;
     public Button exitBTN;
     private string answer;
 
     //Variables for the Nodes and Tree
-    public Node currentNode;
+    //public Node currentNode;
     public QuestionsManager questionsManager;
 
     //Private Variables
@@ -30,9 +32,13 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         //Initialize the Tree and start on Root
-        currentNode = questionsManager.AVL.Root;
+        if (questionsManager.AVL.Root != null)
+        {
+            QuestionsManager.currentNode = questionsManager.AVL.Root;
+        }
         TXTAssigments();
-        win = false;
+        win = false; //bool to control if the player has won yet
+        inputField.onValueChanged.AddListener(FilterInput); //Listener to not let the player write ¿? on the inputField
         agregarBTN.SetActive(true);
         yesbtn.SetActive(false);
         nobtn.SetActive(false);
@@ -42,7 +48,7 @@ public class GameManager : MonoBehaviour
     //Function to change the questions on the interface
     private void TXTAssigments()
     {
-        dialogueTXT.text = currentNode.question;
+        dialogueTXT.text = QuestionsManager.currentNode.question;
     }
 
     //Function to detect if the node has a question on it
@@ -51,10 +57,16 @@ public class GameManager : MonoBehaviour
         return _text.StartsWith("¿") && _text.EndsWith("?");
     }
 
+    //Function to not let the user write ¿? on the input field
+    public void FilterInput(string _input)
+    {
+        inputField.text = _input.Replace("¿", "").Replace("?", "");
+    }
+
     //Function to help restart the Game
     public void StartOver()
     {
-        currentNode = questionsManager.AVL.Root;
+        QuestionsManager.currentNode = questionsManager.AVL.Root;
         TXTAssigments();
         win = false;
         yesBTN.interactable = true;
@@ -64,6 +76,7 @@ public class GameManager : MonoBehaviour
         yesbtn.SetActive(false);
         nobtn.SetActive(false);
         exitBTN.interactable = false;
+        akinatorSprite.sprite = akinatorNormal;
     }
 
     //Function for the Yes Button
@@ -72,16 +85,16 @@ public class GameManager : MonoBehaviour
         if (win == false)
         {
             //First verifies if the next nodes are null, if they are, tell the user they reached the end of the Tree and if they would like to add more Nodes
-            if (currentNode.yes == null && currentNode.no == null)
+            if (QuestionsManager.currentNode.question == "Empty Yes Question" || QuestionsManager.currentNode.yes == null && QuestionsManager.currentNode.no == null)
             {
                 DeveloperTools();
             }
-            else if (CheckQuestion(currentNode.question) == true) //If it detects that the question has ¿?
+            else if (CheckQuestion(QuestionsManager.currentNode.question) == true) //If it detects that the question has ¿?
             {
                 //Verifies if the next node is null, if not, moves through the tree
-                if (currentNode.yes != null)
+                if (QuestionsManager.currentNode.yes != null)
                 {
-                    currentNode = currentNode.yes;
+                    QuestionsManager.currentNode = QuestionsManager.currentNode.yes;
                     TXTAssigments();
                 }
             }
@@ -105,16 +118,16 @@ public class GameManager : MonoBehaviour
         if (win == false)
         {
             //First verifies if the next nodes are null, if they are, tell the user they reached the end of the Tree and if they would like to add more Nodes
-            if (currentNode.yes == null && currentNode.no == null)
+            if (QuestionsManager.currentNode.question == "Empty No Question" || QuestionsManager.currentNode.yes == null && QuestionsManager.currentNode.no == null)
             {
                 DeveloperTools();
             }
-            else if (CheckQuestion(currentNode.question) == true) //If it detects that the question has ¿?
+            else if (CheckQuestion(QuestionsManager.currentNode.question) == true) //If it detects that the question has ¿?
             {
                 //Verifies if the next node is null, if not, moves through the tree
-                if (currentNode.no != null)
+                if (QuestionsManager.currentNode.no != null)
                 {
-                    currentNode = currentNode.no;
+                    QuestionsManager.currentNode = QuestionsManager.currentNode.no;
                     TXTAssigments();
                 }
             }
@@ -125,17 +138,17 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            dialogueTXT.text = "¡Akinator ha adivinado!. ¿Desea jugar de nuevo?";
-            yesBTN.interactable = false;
-            noBTN.interactable = false;
-            startOverBTN.SetActive(true);
+            QuestionsManager.currentNode = QuestionsManager.currentNode.no;
+            win = false;
+            akinatorSprite.sprite = akinatorNormal;
+            TXTAssigments();
         }
     }
 
     //Function for what will happen on screen once it founds an answer on the Tree
     private void AnswerFound()
     {
-        dialogueTXT.text = "¿Esta pensando en " + currentNode.question + "?";
+        dialogueTXT.text = "¿Esta pensando en " + QuestionsManager.currentNode.question + "?";
         if (akinatorSprite != null && akinatorHappy != null)
         {
             akinatorSprite.sprite = akinatorHappy;
@@ -147,13 +160,13 @@ public class GameManager : MonoBehaviour
     private void DeveloperTools()
     {
         developersToolPanel.SetActive(true);
-        textTXT.text = "Ha llegado al final de las preguntas disponibles. Escriba el nombre de lo que estaba pensando.";
+        textTXT.text = "Ha llegado al final de las preguntas disponibles. Escriba el nombre de lo que estabas pensando.";
     }
 
     //Function for the AcceptBTN
     public void AgregarBTN()
     {
-        exitBTN.interactable = false;
+        exitBTN.interactable = true;
         agregarBTN.SetActive(false);
         answer = inputTXT.text;
         yesbtn.SetActive(true);
@@ -164,6 +177,7 @@ public class GameManager : MonoBehaviour
     //Function to exit the Developer Tools Panel
     public void ExitDeveloperTools()
     {
+        QuestionsManager.currentNode.question = answer;
         developersToolPanel.SetActive(false);
         StartOver();
     }

@@ -11,10 +11,10 @@ public class QuestionsManager : MonoBehaviour
     public Text questionTXT;
 
     //Variables to navigate Tree
-    public Node currentNode;
+    public static Node currentNode;
     public Tree AVL;
 
-    private void Start()
+    private void Awake()
     {
         Debug.Log(Application.persistentDataPath);
         JSONLoad();
@@ -26,7 +26,6 @@ public class QuestionsManager : MonoBehaviour
             Debug.LogError("El árbol AVL o su raíz están vacíos. No se puede guardar en JSON.");
             return;
         }
-
     }
 
     //Function to add question marks to the questions
